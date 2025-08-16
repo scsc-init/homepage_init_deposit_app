@@ -28,35 +28,35 @@ class MainActivity : ComponentActivity() {
         }
 
         val dbHelper = NotificationReaderDbHelper(this)
-        val db = dbHelper.readableDatabase
-
-        val cursor = db.query(
-            NotificationContract.NotificationEntry.TABLE_NAME,
-            null, // The array of columns to return (pass null to get all)
-            null, // The columns for the WHERE clause
-            null, // The values for the WHERE clause
-            null, // don't group the rows
-            null, // don't filter by row groups
-            "${NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME} DESC" // The sort order
-        )
 
         val notifs = mutableListOf<NotificationDTO>()
-        with(cursor) {
-            while (moveToNext()) {
-                val packageName =
-                    getString(getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_PACKAGE_NAME))
-                val title =
-                    getString(getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_TITLE))
-                val text =
-                    getString(getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_TEXT))
-                val postTime =
-                    getLong(getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME))
-                notifs.add(NotificationDTO(packageName, title, text, postTime))
+        dbHelper.readableDatabase.use { db ->
+            db.query(
+                NotificationContract.NotificationEntry.TABLE_NAME,
+                null, // columns (null => all)
+                null, // selection
+                null, // selectionArgs
+                null, // groupBy
+                null, // having
+                "${NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME} DESC" // The sort order
+            ).use { cursor ->
+                while (cursor.moveToNext()) {
+                    val packageName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_PACKAGE_NAME)
+                    )
+                    val title = cursor.getString(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_TITLE)
+                    )
+                    val text = cursor.getString(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_TEXT)
+                    )
+                    val postTime = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME)
+                    )
+                    notifs.add(NotificationDTO(packageName, title, text, postTime))
+                }
             }
         }
-        cursor.close()
-
-        db.close()
         dbHelper.close()
 
         setContent {

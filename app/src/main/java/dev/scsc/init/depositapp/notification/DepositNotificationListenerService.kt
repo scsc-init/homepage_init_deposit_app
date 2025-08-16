@@ -12,10 +12,14 @@ import androidx.work.workDataOf
 class DepositNotificationListenerService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         val packageName = sbn.packageName
-        val title = sbn.notification.extras.getString(Notification.EXTRA_TITLE) ?: ""
-        val text = sbn.notification.extras.getString(Notification.EXTRA_TEXT) ?: ""
+        val extras = sbn.notification.extras
+        val title = (extras.getCharSequence(Notification.EXTRA_TITLE) ?: "").toString()
+        val text = (extras.getCharSequence(Notification.EXTRA_TEXT)
+            ?: extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
+            ?: "").toString()
         val postTime = sbn.postTime
 
+        if (title.isBlank() && text.isBlank()) return
         sendNotificationToServer(packageName, title, text, postTime)
     }
 
@@ -30,10 +34,10 @@ class DepositNotificationListenerService : NotificationListenerService() {
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(
                     workDataOf(
-                        "package_name" to packageName,
-                        "title" to title,
-                        "text" to text,
-                        "post_time" to postTime
+                        UploadNotificationWorker.KEY_PACKAGE_NAME to packageName,
+                        UploadNotificationWorker.KEY_TITLE to title.take(1024),
+                        UploadNotificationWorker.KEY_TEXT to text.take(4096),
+                        UploadNotificationWorker.KEY_POST_TIME to postTime
                     )
                 )
                 .build()

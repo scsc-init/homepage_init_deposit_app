@@ -2,19 +2,19 @@ package dev.scsc.init.depositapp.notification
 
 import android.content.ContentValues
 import android.content.Context
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dev.scsc.init.depositapp.db.NotificationContract
 import dev.scsc.init.depositapp.db.NotificationReaderDbHelper
 
 class UploadNotificationWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-    override fun doWork(): Result {
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
         // Retrieve data passed from the service
-        val packageName: String? = inputData.getString("package_name")
-        val title: String? = inputData.getString("title")
-        val text: String? = inputData.getString("text")
-        val postTime: Long = inputData.getLong("post_time", 0)
+        val packageName: String? = inputData.getString(KEY_PACKAGE_NAME)
+        val title: String? = inputData.getString(KEY_TITLE)
+        val text: String? = inputData.getString(KEY_TEXT)
+        val postTime: Long = inputData.getLong(KEY_POST_TIME, 0)
 
         if (packageName.isNullOrBlank() || title.isNullOrBlank() || text.isNullOrBlank() || postTime == 0L) {
             return Result.failure()
@@ -39,7 +39,7 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
                     val newRowId =
                         db.insert(NotificationContract.NotificationEntry.TABLE_NAME, null, values)
                     if (newRowId == -1L) {
-                        Result.retry()
+                        Result.failure()
                     } else {
                         Result.success()
                     }
@@ -48,9 +48,16 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
                 dbHelper.close()
             }
         } catch (_: android.database.sqlite.SQLiteDatabaseLockedException) {
-            Result.retry()
+            Result.failure()
         } catch (_: android.database.sqlite.SQLiteException) {
             Result.failure()
         }
+    }
+
+    companion object {
+        const val KEY_PACKAGE_NAME = "package_name"
+        const val KEY_TITLE = "title"
+        const val KEY_TEXT = "text"
+        const val KEY_POST_TIME = "post_time"
     }
 }
