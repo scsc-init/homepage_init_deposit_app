@@ -57,6 +57,9 @@ class MainActivity : ComponentActivity() {
         }
         cursor.close()
 
+        db.close()
+        dbHelper.close()
+
         setContent {
             DepositAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->

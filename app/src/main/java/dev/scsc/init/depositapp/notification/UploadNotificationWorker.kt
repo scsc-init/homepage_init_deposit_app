@@ -20,11 +20,6 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
             return Result.failure()
         }
 
-        val dbHelper = NotificationReaderDbHelper(applicationContext)
-
-        // Gets the data repository in write mode
-        val db = dbHelper.writableDatabase
-
         // Create a new map of values, where column names are the keys
         val values = ContentValues().apply {
             put(NotificationContract.NotificationEntry.COLUMN_NAME_PACKAGE_NAME, packageName)
@@ -33,18 +28,29 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
             put(NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME, postTime)
         }
 
-        if (db == null) {
-            return Result.failure()
-        }
-        // Insert the new row, returning the primary key value of the new row
-        val newRowId = db.insert(NotificationContract.NotificationEntry.TABLE_NAME, null, values)
-        if (newRowId == -1L) {
-            return Result.failure()
-        }
-
         // Perform the network request here.
         // For example, using a library like Retrofit or HttpUrlConnection.
 
-        return Result.success()
+        return try {
+            val dbHelper = NotificationReaderDbHelper(applicationContext)
+            try {
+                dbHelper.writableDatabase.use { db ->
+                    // Insert the new row, returning the primary key value of the new row
+                    val newRowId =
+                        db.insert(NotificationContract.NotificationEntry.TABLE_NAME, null, values)
+                    if (newRowId == -1L) {
+                        Result.retry()
+                    } else {
+                        Result.success()
+                    }
+                }
+            } finally {
+                dbHelper.close()
+            }
+        } catch (_: android.database.sqlite.SQLiteDatabaseLockedException) {
+            Result.retry()
+        } catch (_: android.database.sqlite.SQLiteException) {
+            Result.failure()
+        }
     }
 }
