@@ -45,9 +45,6 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
         // Perform the network request here.
         // For example, using a library like Retrofit or HttpUrlConnection.
 
-        // If the request is successful, return success
         return Result.success()
-        // If it fails, you can retry later
-        // return Result.retry();
     }
 }
