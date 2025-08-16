@@ -5,5 +5,4 @@ data class NotificationDTO(
     val title: String,
     val text: String,
     val postTime: Long
-) {
-}
+)

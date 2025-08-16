@@ -9,7 +9,7 @@ import dev.scsc.init.depositapp.db.NotificationReaderDbHelper
 
 class UploadNotificationWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
-    public override fun doWork(): Result {
+    override fun doWork(): Result {
         // Retrieve data passed from the service
         val packageName: String? = inputData.getString("package_name")
         val title: String? = inputData.getString("title")
