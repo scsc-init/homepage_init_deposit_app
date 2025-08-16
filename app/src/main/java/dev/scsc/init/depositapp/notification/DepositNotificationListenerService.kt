@@ -38,6 +38,6 @@ class DepositNotificationListenerService : NotificationListenerService() {
                 )
                 .build()
 
-        WorkManager.Companion.getInstance(applicationContext).enqueue(uploadRequest)
+        WorkManager.getInstance(applicationContext).enqueue(uploadRequest)
     }
 }

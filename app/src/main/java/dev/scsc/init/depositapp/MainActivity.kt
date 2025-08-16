@@ -2,6 +2,7 @@ package dev.scsc.init.depositapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,8 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.app.NotificationManagerCompat
 import dev.scsc.init.depositapp.db.NotificationContract
-import dev.scsc.init.depositapp.db.NotificationDTO
 import dev.scsc.init.depositapp.db.NotificationReaderDbHelper
+import dev.scsc.init.depositapp.model.NotificationDTO
 import dev.scsc.init.depositapp.ui.NotificationView
 import dev.scsc.init.depositapp.ui.theme.DepositAppTheme
 
@@ -22,9 +23,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         if (!permissionGranted()) {
-            val intent = Intent(
-                "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"
-            )
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
             startActivity(intent)
         }
 
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
             null, // The values for the WHERE clause
             null, // don't group the rows
             null, // don't filter by row groups
-            null  // The sort order
+            "${NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME} DESC" // The sort order
         )
 
         val notifs = mutableListOf<NotificationDTO>()

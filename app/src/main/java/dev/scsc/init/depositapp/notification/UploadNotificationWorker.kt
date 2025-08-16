@@ -16,7 +16,7 @@ class UploadNotificationWorker(context: Context, workerParams: WorkerParameters)
         val text: String? = inputData.getString("text")
         val postTime: Long = inputData.getLong("post_time", 0)
 
-        if (packageName == null || title == null || text == null) {
+        if (packageName.isNullOrBlank() || title.isNullOrBlank() || text.isNullOrBlank() || postTime == 0L) {
             return Result.failure()
         }
 

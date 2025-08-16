@@ -8,13 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.scsc.init.depositapp.db.NotificationDTO
+import dev.scsc.init.depositapp.model.NotificationDTO
 
 @Composable
 fun NotificationView(notifs: List<NotificationDTO>, modifier: Modifier = Modifier) {
     Box(modifier = modifier.padding(12.dp)) {
         LazyColumn {
-            items(notifs) { notif ->
+            items(notifs, key = { it.postTime }) { notif ->
                 Text("${notif.packageName} ${notif.title}, ${notif.text}, ${notif.postTime}")
             }
         }
