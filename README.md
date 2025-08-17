@@ -21,7 +21,7 @@ SCSC 홈페이지 입금 확인 앱 문서
 
 안드로이드 스튜디오 상단 메뉴 Help > About 에서 확인할 수 있는 안드로이드 스튜디오 등 버전은 아래와 같습니다.
 
-```
+```text
 Android Studio Narwhal Feature Drop | 2025.1.2
 Build #AI-251.26094.121.2512.13840223, built on July 27, 2025
 Runtime version: 21.0.6+-13391695-b895.109 amd64
@@ -60,7 +60,7 @@ compileOptions {
 ### 앱 권한
 
 - `android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`: 임의의 알림을 읽는 `NotificationListenerService`를
-  사용하기 위한 권한입니다.
+  사용하기 위한 권한입니다. 이는 `uses-permission`으로 요청하는 런타임 권한이 아니며, 사용자가 시스템 설정에서 앱의 '알림 접근' 권한을 허용해야 동작합니다.
 - `android.permission.INTERNET`: 인터넷 권한입니다.
 
 ## 실행 방법
