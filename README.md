@@ -46,6 +46,17 @@ ide.experimental.ui=true
 - targetSdk=36(android 16)
 - compileSdk=36
 
+### JDK 버전
+
+사용하는 JDK 버전은 `app/build.gradle.kts`에 설정되어 있고 값은 다음과 같습니다.
+
+```kotlin
+compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+```
+
 ### 앱 권한
 
 - `android.permission.BIND_NOTIFICATION_LISTENER_SERVICE`: 임의의 알림을 읽는 `NotificationListenerService`를
