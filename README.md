@@ -6,9 +6,9 @@ SCSC 홈페이지 입금 확인 앱 문서
 >
 > 최신 개정일: 2025-08-17
 >
-> 최신 개정자: [이한경TI]()
+> 최신 개정자: [이한경TI](mailto:tteokgook@gmail.com)
 >
-> 작성자: [강명석CSE](mailto:tomskang@naver.com), [이한경TI]()
+> 작성자: [강명석CSE](mailto:tomskang@naver.com), [이한경TI](mailto:tteokgook@gmail.com)
 
 ## 브랜치
 
