@@ -8,6 +8,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import dev.scsc.init.depositapp.R
 
 class DepositNotificationListenerService : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -20,6 +21,7 @@ class DepositNotificationListenerService : NotificationListenerService() {
         val postTime = sbn.postTime
 
         if (title.isBlank() && text.isBlank()) return
+        if (packageName != getString(R.string.bank_package_name)) return
         sendNotificationToServer(packageName, title, text, postTime)
     }
 

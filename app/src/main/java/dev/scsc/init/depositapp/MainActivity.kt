@@ -53,7 +53,26 @@ class MainActivity : ComponentActivity() {
                     val postTime = cursor.getLong(
                         cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_POST_TIME)
                     )
-                    notifs.add(NotificationDTO(packageName, title, text, postTime))
+                    val amount = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_AMOUNT)
+                    )
+                    val depositName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_DEPOSIT_NAME)
+                    )
+                    val resultCode = cursor.getInt(
+                        cursor.getColumnIndexOrThrow(NotificationContract.NotificationEntry.COLUMN_NAME_RESULT_CODE)
+                    )
+                    notifs.add(
+                        NotificationDTO(
+                            packageName,
+                            title,
+                            text,
+                            postTime,
+                            amount,
+                            depositName,
+                            resultCode
+                        )
+                    )
                 }
             }
         }

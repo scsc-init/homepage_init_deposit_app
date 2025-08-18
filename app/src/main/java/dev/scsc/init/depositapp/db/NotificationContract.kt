@@ -9,5 +9,8 @@ object NotificationContract {
         const val COLUMN_NAME_TITLE = "title"
         const val COLUMN_NAME_TEXT = "text"
         const val COLUMN_NAME_POST_TIME = "post_time"
+        const val COLUMN_NAME_AMOUNT = "amount"
+        const val COLUMN_NAME_DEPOSIT_NAME = "deposit_name"
+        const val COLUMN_NAME_RESULT_CODE = "result_code"
     }
 }

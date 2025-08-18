@@ -26,7 +26,7 @@ class NotificationReaderDbHelper(context: Context) :
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        const val DATABASE_VERSION = 2
+        const val DATABASE_VERSION = 3
         const val DATABASE_NAME = "notification.db"
 
         private const val SQL_CREATE_ENTRIES =
@@ -35,7 +35,10 @@ class NotificationReaderDbHelper(context: Context) :
                     "${NotificationEntry.COLUMN_NAME_PACKAGE_NAME} TEXT NOT NULL," +
                     "${NotificationEntry.COLUMN_NAME_TITLE} TEXT NOT NULL," +
                     "${NotificationEntry.COLUMN_NAME_TEXT} TEXT NOT NULL," +
-                    "${NotificationEntry.COLUMN_NAME_POST_TIME} INT NOT NULL)"
+                    "${NotificationEntry.COLUMN_NAME_POST_TIME} INT NOT NULL," +
+                    "${NotificationEntry.COLUMN_NAME_AMOUNT} INT," +
+                    "${NotificationEntry.COLUMN_NAME_DEPOSIT_NAME} TEXT," +
+                    "${NotificationEntry.COLUMN_NAME_RESULT_CODE} INT)"
 
         private const val SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS ${NotificationEntry.TABLE_NAME}"

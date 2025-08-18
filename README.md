@@ -4,7 +4,7 @@ SCSC 홈페이지 입금 확인 앱 문서
 
 > 최초 작성일: 2025-08-17
 >
-> 최신 개정일: 2025-08-17
+> 최신 개정일: 2025-08-18
 >
 > 최신 개정자: [이한경TI](mailto:tteokgook@gmail.com)
 >
@@ -70,7 +70,12 @@ ide.experimental.ui=true
   `android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"`로 지정합니다. 또한 런타임 권한 요청
   대상이 아니며, 사용자가 시스템 설정에서 앱의 ‘알림 접근’을 허용해야 동작합니다.
 - `android.permission.INTERNET`: 인터넷 권한(정상 권한)으로, 설치 시 자동 부여되며 런타임 요청이 필요 없습니다.
+- `android.permission.ACCESS_NETWORK_STATE`: 네트워크 연결 상태를 확인하는 데 필요한 권한(정상 권한)입니다.
 
 ## 실행 방법
+
+### 설정 파일
+
+- `app/src/main/res/values/secrets.xml` 파일이 필요합니다.
 
 - TODO: 실행 방법 문서화 예정
