@@ -22,6 +22,7 @@ class DepositNotificationListenerService : NotificationListenerService() {
 
         if (packageName != getString(R.string.bank_package_name)) return
         if (title.isBlank() && text.isBlank()) return
+        if (packageName != getString(R.string.bank_package_name)) return
         sendNotificationToServer(packageName, title, text, postTime)
     }
 
