@@ -76,6 +76,14 @@ ide.experimental.ui=true
 
 ### 설정 파일
 
-- `app/src/main/res/values/secrets.xml` 파일이 필요합니다.
+- `app/src/main/res/values/secrets.xml` 파일이 필요합니다. 파일에 포함된 값은 다음과 같습니다.
+    - `<string name="bank_package_name">`: 알림 처리 대상 앱 패키지명입니다. `com.kbstar.kbbank`(KB스타뱅킹)을 사용합니다.
+    - `<string name="server_base_url">`: 요청을 보낼 서버 URL입니다.
+    - `<string name="server_api_key">`: 요청을 보낼 서버의
+      API_KEY입니다. https://github.com/scsc-init/homepage_init_backend `.env`에서 정의한 `API_SECRET`과 같은
+      값으로 설정합니다.
+    - `<string name="server_login_email">`: 앱이 사용할 관리자 계정의
+      메일입니다. https://github.com/scsc-init/homepage_init_backend/blob/develop/script/init_db/presidents.example.csv
+      에 포함된 `deposit.app@scsc.dev`를 사용합니다.
 
 - TODO: 실행 방법 문서화 예정

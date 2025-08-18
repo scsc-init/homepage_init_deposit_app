@@ -9,7 +9,7 @@ data class NotificationDTO(
     val title: String,
     val text: String,
     val postTime: Long,
-    val amount: Long,
-    val depositName: String,
-    val resultCode: Int
+    val amount: Long?,
+    val depositName: String?,
+    val resultCode: Int?
 )

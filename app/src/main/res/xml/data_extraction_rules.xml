@@ -5,10 +5,14 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Exclude notification cache DB -->
+        <exclude
+            domain="database"
+            path="notification.db" />
+        <!-- Exclude any prefs storing authentication tokens -->
+        <exclude
+            domain="sharedpref"
+            path="auth_prefs.xml" />
     </cloud-backup>
     <!--
     <device-transfer>

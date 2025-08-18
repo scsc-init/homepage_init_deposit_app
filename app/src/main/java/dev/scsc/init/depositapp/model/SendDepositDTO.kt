@@ -1,9 +1,11 @@
 package dev.scsc.init.depositapp.model
 
+import com.google.gson.annotations.SerializedName
+
 data class SendDepositRequest(
     val amount: Long,
-    val deposit_time: String,
-    val deposit_name: String
+    @SerializedName("deposit_time") val depositTime: String,
+    @SerializedName("deposit_name") val depositName: String
 )
 
 data class SendDepositResponse(
@@ -12,21 +14,21 @@ data class SendDepositResponse(
 
 
 data class ResultData(
-    val result_code: Int,
-    val result_msg: String,
+    @SerializedName("result_code") val resultCode: Int,
+    @SerializedName("result_msg") val resultMsg: String,
     val record: DepositRecord,
     val users: List<User>
 )
 
 data class DepositRecord(
     val amount: Long,
-    val deposit_time: String, // ISO 8601 string, consider converting to Instant/LocalDateTime if needed
-    val deposit_name: String
+    @SerializedName("deposit_time") val depositTime: String, // ISO 8601 string, consider converting to Instant/LocalDateTime if needed
+    @SerializedName("deposit_name") val depositName: String
 )
 
 data class User(
     val id: String,
     val email: String,
     val name: String,
-    val major_id: Int
+    @SerializedName("major_id") val majorId: Int
 )
