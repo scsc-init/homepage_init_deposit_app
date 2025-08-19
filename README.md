@@ -4,7 +4,7 @@ SCSC 홈페이지 입금 확인 앱 문서
 
 > 최초 작성일: 2025-08-17
 >
-> 최신 개정일: 2025-08-17
+> 최신 개정일: 2025-08-18
 >
 > 최신 개정자: [이한경TI](mailto:tteokgook@gmail.com)
 >
@@ -70,7 +70,20 @@ ide.experimental.ui=true
   `android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"`로 지정합니다. 또한 런타임 권한 요청
   대상이 아니며, 사용자가 시스템 설정에서 앱의 ‘알림 접근’을 허용해야 동작합니다.
 - `android.permission.INTERNET`: 인터넷 권한(정상 권한)으로, 설치 시 자동 부여되며 런타임 요청이 필요 없습니다.
+- `android.permission.ACCESS_NETWORK_STATE`: 네트워크 연결 상태를 확인하는 데 필요한 권한(정상 권한)입니다.
 
 ## 실행 방법
+
+### 설정 파일
+
+- `app/src/main/res/values/secrets.xml` 파일이 필요합니다. 파일에 포함된 값은 다음과 같습니다.
+    - `<string name="bank_package_name">`: 알림 처리 대상 앱 패키지명입니다. `com.kbstar.kbbank`(KB스타뱅킹)을 사용합니다.
+    - `<string name="server_base_url">`: 요청을 보낼 서버 URL입니다.
+    - `<string name="server_api_key">`: 요청을 보낼 서버의
+      API_KEY입니다. https://github.com/scsc-init/homepage_init_backend `.env`에서 정의한 `API_SECRET`과 같은
+      값으로 설정합니다.
+    - `<string name="server_login_email">`: 앱이 사용할 관리자 계정의
+      메일입니다. https://github.com/scsc-init/homepage_init_backend/blob/develop/script/init_db/presidents.example.csv
+      에 포함된 `deposit.app@scsc.dev`를 사용합니다.
 
 - TODO: 실행 방법 문서화 예정
