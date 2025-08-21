@@ -3,8 +3,8 @@ package dev.scsc.init.depositapp.notification
 import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import dev.scsc.init.depositapp.MyApplication
 import dev.scsc.init.depositapp.R
-import dev.scsc.init.depositapp.db.NotificationDatabase
 import dev.scsc.init.depositapp.db.NotificationRepository
 import dev.scsc.init.depositapp.db.RawNotification
 import kotlinx.coroutines.CoroutineScope
@@ -16,13 +16,7 @@ class DepositNotificationListenerService : NotificationListenerService() {
     private lateinit var repository: NotificationRepository
     override fun onCreate() {
         super.onCreate()
-        val db = NotificationDatabase.getDatabase(applicationContext)
-        repository = NotificationRepository(
-            applicationContext,
-            db.rawNotificationDao(),
-            db.processedNotificationDao(),
-            db.sendDepositResultDao()
-        )
+        repository = (application as MyApplication).repository
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {

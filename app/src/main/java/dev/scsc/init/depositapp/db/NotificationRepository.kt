@@ -29,6 +29,7 @@ class NotificationRepository(
     suspend fun insertRawNotification(notification: RawNotification) {
         mutex.withLock {
             rawDao.insert(notification)
+            Log.d("notif_repo", "insert raw notif")
         }
         withContext(Dispatchers.IO) {
             processAndStoreNotifications()
@@ -46,6 +47,7 @@ class NotificationRepository(
                         val processedNotif = process(notif)
                         processedDao.insert(processedNotif)
                         rawDao.delete(notif)
+                        Log.d("notif_repo", "insert parsed notif")
                     } catch (e: Exception) {
                         Log.e("Repository", "Failed to process notification: ${notif.id}", e)
                     }
@@ -86,6 +88,7 @@ class NotificationRepository(
                             )
                         }
                         processedDao.delete(notif)
+                        Log.d("notif_repo", "insert result")
                         isSuccess = true
                     } catch (e: Exception) {
                         Log.e("Repository", "Failed to send notification: ${notif.id}", e)
