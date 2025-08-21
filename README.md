@@ -58,7 +58,7 @@ ide.experimental.ui=true
 ### 빌드 도구 등 버전
 
 - targetCompatibility: Java 11
-- AGP (Android Gradle Plugin): 8.12.0
+- AGP (Android Gradle Plugin): 8.12.1
 - Gradle: 8.13
 - Gradle JDK: 21
 - Kotlin: 2.2.10
