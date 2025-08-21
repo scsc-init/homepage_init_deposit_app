@@ -30,7 +30,6 @@ class DepositNotificationListenerService : NotificationListenerService() {
 
         if (packageName != getString(R.string.bank_package_name)) return
         if (title.isBlank() && text.isBlank()) return
-        if (packageName != getString(R.string.bank_package_name)) return
         val rawNotification = RawNotification(title = title, content = text, timestamp = postTime)
 
         scope.launch {

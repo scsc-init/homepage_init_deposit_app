@@ -66,11 +66,13 @@ class NotificationRepository(
             val processedNotifications = processedDao.getAll()
             if (processedNotifications.isNotEmpty()) {
                 var isSuccess = false // mark as true if any notif succeeded
+                val jwt = loginToServer(context)
                 processedNotifications.forEach { notif ->
                     try {
                         withContext(Dispatchers.IO) {
-                            val response = sendNotificationToServer(
+                            val response = sendDepositToServer(
                                 context,
+                                jwt,
                                 SendDepositRequest(
                                     notif.amount,
                                     notif.depositTime,
@@ -161,10 +163,7 @@ class NotificationRepository(
         )
     }
 
-    private suspend fun sendNotificationToServer(
-        context: Context,
-        reqDepositBody: SendDepositRequest
-    ): SendDepositResponse {
+    private suspend fun loginToServer(context: Context): String {
         if (!isNetworkAvailable(context)) throw IllegalStateException("951")
 
         val retrofit = Retrofit.Builder()
@@ -182,10 +181,27 @@ class NotificationRepository(
         val loginResponse = resLogin.body()
         val jwt = loginResponse?.jwt
         if (jwt == null) throw IllegalStateException("953")
+        return jwt
+    }
+
+    private suspend fun sendDepositToServer(
+        context: Context,
+        jwt: String,
+        reqDepositBody: SendDepositRequest
+    ): SendDepositResponse {
+        if (!isNetworkAvailable(context)) throw IllegalStateException("961")
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(context.getString(R.string.server_base_url))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val apiService = retrofit.create(ApiService::class.java)
+
+        val apiSecret = context.getString(R.string.server_api_key)
 
         val resDeposit = apiService.sendDeposit(apiSecret, jwt, reqDepositBody)
         val result = resDeposit.body()
-        if (!resDeposit.isSuccessful || result == null) throw IllegalStateException("954")
+        if (!resDeposit.isSuccessful || result == null) throw IllegalStateException("962")
         return result
     }
 

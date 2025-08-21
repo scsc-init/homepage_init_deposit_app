@@ -10,7 +10,7 @@ interface SendDepositResultDao {
     @Insert
     fun insert(result: SendDepositResult)
 
-    @Query("SELECT * FROM send_deposit_result")
+    @Query("SELECT * FROM send_deposit_result ORDER BY id DESC")
     fun getAll(): List<SendDepositResult>
 
     @Query("DELETE FROM send_deposit_result")

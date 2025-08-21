@@ -10,7 +10,7 @@ interface RawNotificationDao {
     @Insert
     fun insert(notification: RawNotification)
 
-    @Query("SELECT * FROM raw_notification ORDER BY timestamp ASC")
+    @Query("SELECT * FROM raw_notification ORDER BY id DESC")
     fun getAll(): List<RawNotification>
 
     @Query("DELETE FROM raw_notification")

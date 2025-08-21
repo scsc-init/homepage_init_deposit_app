@@ -10,7 +10,7 @@ interface ParsedNotificationDao {
     @Insert
     fun insert(notification: ParsedNotification)
 
-    @Query("SELECT * FROM parsed_notification")
+    @Query("SELECT * FROM parsed_notification ORDER BY id DESC")
     fun getAll(): List<ParsedNotification>
 
     @Query("DELETE FROM parsed_notification")
