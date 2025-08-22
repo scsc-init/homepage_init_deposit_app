@@ -8,14 +8,14 @@ import androidx.room.Query
 @Dao
 interface ParsedNotificationDao {
     @Insert
-    fun insert(notification: ParsedNotification)
+    suspend fun insert(notification: ParsedNotification)
 
     @Query("SELECT * FROM parsed_notification ORDER BY id DESC")
-    fun getAll(): List<ParsedNotification>
+    suspend fun getAll(): List<ParsedNotification>
 
     @Query("DELETE FROM parsed_notification")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Delete
-    fun delete(notif: ParsedNotification)
+    suspend fun delete(notif: ParsedNotification)
 }

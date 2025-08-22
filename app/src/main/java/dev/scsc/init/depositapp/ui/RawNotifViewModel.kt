@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.scsc.init.depositapp.MyApplication
 import dev.scsc.init.depositapp.db.NotificationRepository
 import dev.scsc.init.depositapp.db.RawNotification
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,17 +17,17 @@ import kotlinx.coroutines.launch
 
 // 2. ViewModel 구현
 class RawNotifViewModel(private val repository: NotificationRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(listOf<RawNotification>())
+    private val _uiState = MutableStateFlow<List<RawNotification>>(emptyList())
     val uiState: StateFlow<List<RawNotification>> = _uiState.asStateFlow()
 
     fun refreshState() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.value = repository.getAllRawNotif()
         }
     }
-    
+
     fun onParseButtonClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.processAndStoreNotifications()
             refreshState()
         }

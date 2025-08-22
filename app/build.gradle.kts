@@ -4,7 +4,17 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
+}
+
+// KSP settings for Room schema export
+ksp {
+    // Export JSON schemas to version-controlled directory
+    arg("room.schemaLocation", "$projectDir/schemas")
+    // Enable incremental processing (default: true)
+    arg("room.incremental", "true")
+    // Generate Kotlin sources (requires KSP; default: true from Room 2.7.0+)
+    arg("room.generateKotlin", "true")
 }
 
 android {

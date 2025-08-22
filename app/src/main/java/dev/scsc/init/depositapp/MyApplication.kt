@@ -5,16 +5,15 @@ import dev.scsc.init.depositapp.db.NotificationDatabase
 import dev.scsc.init.depositapp.db.NotificationRepository
 
 class MyApplication : Application() {
+    lateinit var database: NotificationDatabase
     lateinit var repository: NotificationRepository
 
     override fun onCreate() {
         super.onCreate()
-        val db = NotificationDatabase.getDatabase(applicationContext)
+        database = NotificationDatabase.getDatabase(applicationContext)
         repository = NotificationRepository(
             applicationContext,
-            db.rawNotificationDao(),
-            db.processedNotificationDao(),
-            db.sendDepositResultDao()
+            database
         )
     }
 }

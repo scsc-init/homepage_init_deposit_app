@@ -18,10 +18,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 
 
@@ -58,12 +58,16 @@ fun AppNavHost(
     }
 }
 
-@Preview()
 @Composable
 fun AppWithNav(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val startDestination = Destination.RESULT
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val newSelectedDestination = Destination.entries.find { it.route == currentDestination?.route }
+    selectedDestination = newSelectedDestination?.ordinal ?: startDestination.ordinal
 
     Scaffold(
         modifier = modifier,
@@ -73,7 +77,10 @@ fun AppWithNav(modifier: Modifier = Modifier) {
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            navController.navigate(route = destination.route)
+                            navController.navigate(route = destination.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             selectedDestination = index
                         },
                         icon = {

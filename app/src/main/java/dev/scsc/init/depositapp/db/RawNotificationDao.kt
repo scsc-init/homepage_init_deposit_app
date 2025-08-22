@@ -8,14 +8,14 @@ import androidx.room.Query
 @Dao
 interface RawNotificationDao {
     @Insert
-    fun insert(notification: RawNotification)
+    suspend fun insert(notification: RawNotification)
 
     @Query("SELECT * FROM raw_notification ORDER BY id DESC")
-    fun getAll(): List<RawNotification>
+    suspend fun getAll(): List<RawNotification>
 
     @Query("DELETE FROM raw_notification")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Delete
-    fun delete(notif: RawNotification)
+    suspend fun delete(notif: RawNotification)
 }

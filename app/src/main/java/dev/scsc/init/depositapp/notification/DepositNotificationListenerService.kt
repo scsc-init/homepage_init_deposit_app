@@ -9,14 +9,21 @@ import dev.scsc.init.depositapp.db.NotificationRepository
 import dev.scsc.init.depositapp.db.RawNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class DepositNotificationListenerService : NotificationListenerService() {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private lateinit var repository: NotificationRepository
     override fun onCreate() {
         super.onCreate()
         repository = (application as MyApplication).repository
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel("DepositNotificationListenerService destroyed")
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {

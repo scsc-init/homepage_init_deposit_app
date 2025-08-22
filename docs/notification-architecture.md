@@ -20,6 +20,45 @@
 
 - 알림을 수집한 뒤 `RawNotification`에 저장되고 `ParsedNotification`를 거쳐 최종 처리 결과가 `SendDepositResult`에 저장됩니다.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User
+    participant ALS as DepositNotificationListenerService
+    participant Repo as NotificationRepository
+    participant DB as Room (Raw/Parsed/Result)
+    participant API as Retrofit ApiService
+
+    rect rgba(200,230,255,0.3)
+        note over ALS: On bank notification posted
+        ALS ->> Repo: insertRawNotification(title, content, timestamp)
+        Repo ->> DB: insert RawNotification
+    end
+
+    rect rgba(200,255,200,0.3)
+        note over User, Repo: User taps "Parse Data" (RawNotifView)
+        User ->> Repo: processAndStoreNotifications()
+        Repo ->> DB: load all RawNotification
+        loop each raw
+            Repo ->> Repo: parse to ParsedNotification
+            Repo ->> DB: insert ParsedNotification
+            Repo ->> DB: delete RawNotification
+        end
+    end
+
+    rect rgba(255,240,200,0.3)
+        note over User, API: User taps "Send Data" (ParsedNotifView)
+        User ->> Repo: sendBufferToServer()
+        Repo ->> DB: load all ParsedNotification
+        Repo ->> API: loginToServer -> JWT
+        loop each parsed
+            Repo ->> API: sendDeposit(jwt, parsed)
+            Repo ->> DB: insert SendDepositResult
+            Repo ->> DB: delete ParsedNotification
+        end
+    end
+```
+
 ## 알림 수집
 
 - `DepositNotificationListenerService`를 통해 알림을 수집하며, 이 서비스는 `app/src/main/AndroidManifest.xml`에 등록되어

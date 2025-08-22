@@ -9,7 +9,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.scsc.init.depositapp.MyApplication
 import dev.scsc.init.depositapp.db.NotificationRepository
 import dev.scsc.init.depositapp.db.SendDepositResult
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,24 +17,24 @@ import kotlinx.coroutines.launch
 
 // 2. ViewModel 구현
 class ResultViewModel(private val repository: NotificationRepository) : ViewModel() {
-    private val _uiState = MutableStateFlow(listOf<SendDepositResult>())
+    private val _uiState = MutableStateFlow<List<SendDepositResult>>(emptyList())
     val uiState: StateFlow<List<SendDepositResult>> = _uiState.asStateFlow()
 
     fun refreshState() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.value = repository.getAllSendDepositResult()
         }
     }
 
     fun onDeleteSucceededButtonClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteSucceededResult()
             refreshState()
         }
     }
 
     fun onDeleteFailedButtonClick() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             repository.deleteFailedResult()
             refreshState()
         }

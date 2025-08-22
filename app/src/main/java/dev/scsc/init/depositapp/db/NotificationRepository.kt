@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import androidx.room.withTransaction
 import dev.scsc.init.depositapp.R
 import dev.scsc.init.depositapp.api.ApiService
 import dev.scsc.init.depositapp.model.LoginRequest
@@ -20,20 +21,26 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class NotificationRepository(
     private val context: Context,
-    private val rawDao: RawNotificationDao,
-    private val processedDao: ParsedNotificationDao,
-    private val sendDepositDao: SendDepositResultDao
+    private val db: NotificationDatabase,
 ) {
     private val mutex = Mutex()
+    private val rawDao: RawNotificationDao = db.rawNotificationDao()
+    private val processedDao: ParsedNotificationDao = db.parsedNotificationDao()
+    private val sendDepositDao: SendDepositResultDao = db.sendDepositResultDao()
+    private val apiService: ApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(context.getString(R.string.server_base_url))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiService::class.java)
+    }
 
     suspend fun insertRawNotification(notification: RawNotification) {
         mutex.withLock {
             rawDao.insert(notification)
-            Log.d("notif_repo", "insert raw notif")
         }
-        withContext(Dispatchers.IO) {
-            processAndStoreNotifications()
-        }
+        Log.d("notif_repo", "insert raw notif")
+        processAndStoreNotifications()
     }
 
     suspend fun processAndStoreNotifications() {
@@ -45,61 +52,60 @@ class NotificationRepository(
                 if (notif.content != null && notif.content.contains("입금")) {
                     try {
                         val processedNotif = process(notif)
-                        processedDao.insert(processedNotif)
-                        rawDao.delete(notif)
+                        db.withTransaction {
+                            processedDao.insert(processedNotif)
+                            rawDao.delete(notif)
+                        }
                         Log.d("notif_repo", "insert parsed notif")
                     } catch (e: Exception) {
-                        Log.e("Repository", "Failed to process notification: ${notif.id}", e)
+                        Log.e("notif_repo", "Failed to process notification: ${notif.id}", e)
                     }
                 } else {
                     rawDao.delete(notif)
                 }
             }
         }
-        withContext(Dispatchers.IO) {
-            sendBufferToServer()
-        }
+        sendBufferToServer()
     }
 
     suspend fun sendBufferToServer(): Boolean {
-        mutex.withLock {
-            val processedNotifications = processedDao.getAll()
-            if (processedNotifications.isNotEmpty()) {
-                var isSuccess = false // mark as true if any notif succeeded
-                val jwt = loginToServer(context)
-                processedNotifications.forEach { notif ->
-                    try {
-                        withContext(Dispatchers.IO) {
-                            val response = sendDepositToServer(
-                                context,
-                                jwt,
-                                SendDepositRequest(
-                                    notif.amount,
-                                    notif.depositTime,
-                                    notif.depositName
-                                )
-                            )
-                            sendDepositDao.insert(
-                                SendDepositResult(
-                                    resultCode = response.result.resultCode,
-                                    resultMsg = response.result.resultMsg,
-                                    depositTime = response.result.record.depositTime,
-                                    depositName = response.result.record.depositName,
-                                    amount = response.result.record.amount
-                                )
-                            )
-                        }
-                        processedDao.delete(notif)
-                        Log.d("notif_repo", "insert result")
-                        isSuccess = true
-                    } catch (e: Exception) {
-                        Log.e("Repository", "Failed to send notification: ${notif.id}", e)
-                    }
+        val processedNotifications = mutex.withLock { processedDao.getAll() }
+        if (processedNotifications.isEmpty()) return true
+
+        var anySuccess = false // mark as true if any notif succeeded
+        val jwt = loginToServer(context)
+        processedNotifications.forEach { notif ->
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    sendDepositToServer(
+                        context,
+                        jwt,
+                        SendDepositRequest(
+                            notif.amount,
+                            notif.depositTime,
+                            notif.depositName
+                        )
+                    )
                 }
-                return isSuccess
+                mutex.withLock {
+                    sendDepositDao.insert(
+                        SendDepositResult(
+                            resultCode = response.result.resultCode,
+                            resultMsg = response.result.resultMsg,
+                            depositTime = response.result.record.depositTime,
+                            depositName = response.result.record.depositName,
+                            amount = response.result.record.amount
+                        )
+                    )
+                    processedDao.delete(notif)
+                }
+                Log.d("notif_repo", "insert result")
+                anySuccess = true
+            } catch (e: Exception) {
+                Log.e("notif_repo", "Failed to send notification: ${notif.id}", e)
             }
         }
-        return true
+        return anySuccess
     }
 
     suspend fun getAllRawNotif(): List<RawNotification> {
@@ -166,12 +172,6 @@ class NotificationRepository(
     private suspend fun loginToServer(context: Context): String {
         if (!isNetworkAvailable(context)) throw IllegalStateException("951")
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl(context.getString(R.string.server_base_url))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val apiService = retrofit.create(ApiService::class.java)
-
         val email = context.getString(R.string.server_login_email)
         val apiSecret = context.getString(R.string.server_api_key)
         val reqLoginBody = LoginRequest(email)
@@ -190,12 +190,6 @@ class NotificationRepository(
         reqDepositBody: SendDepositRequest
     ): SendDepositResponse {
         if (!isNetworkAvailable(context)) throw IllegalStateException("961")
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(context.getString(R.string.server_base_url))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        val apiService = retrofit.create(ApiService::class.java)
 
         val apiSecret = context.getString(R.string.server_api_key)
 

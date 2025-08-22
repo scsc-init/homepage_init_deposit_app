@@ -2,9 +2,13 @@ package dev.scsc.init.depositapp.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "send_deposit_result")
+@Entity(
+    tableName = "send_deposit_result",
+    indices = [Index("result_code")]
+)
 data class SendDepositResult(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
