@@ -4,6 +4,17 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+}
+
+// KSP settings for Room schema export
+ksp {
+    // Export JSON schemas to version-controlled directory
+    arg("room.schemaLocation", "$projectDir/schemas")
+    // Enable incremental processing (default: true)
+    arg("room.incremental", "true")
+    // Generate Kotlin sources (requires KSP; default: true from Room 2.7.0+)
+    arg("room.generateKotlin", "true")
 }
 
 android {
@@ -30,8 +41,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -40,7 +51,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget("11")
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 
@@ -54,11 +65,19 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.work.runtime.ktx)
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.room.runtime)
+    implementation(libs.androidx.navigation.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.room.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
