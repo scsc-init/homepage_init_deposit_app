@@ -41,8 +41,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         compose = true
@@ -51,7 +51,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget("11")
+        jvmTarget = JvmTarget.fromTarget("17")
     }
 }
 
@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.kotlinx.coroutines.core)

@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import dev.scsc.init.depositapp.ui.AppWithNav
 import dev.scsc.init.depositapp.ui.theme.DepositAppTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

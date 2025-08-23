@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -18,13 +17,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.scsc.init.depositapp.util.Util.Companion.convertTimestampToISOString
 
 @Composable
-fun RawNotifView(modifier: Modifier = Modifier) {
-    val viewModel: RawNotifViewModel = viewModel(factory = RawNotifViewModel.Factory)
+fun RawNotifView(
+    modifier: Modifier = Modifier,
+    viewModel: RawNotifViewModel = viewModel(factory = RawNotifViewModel.Factory)
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.refreshState()
-    }
 
     Column(
         modifier = modifier

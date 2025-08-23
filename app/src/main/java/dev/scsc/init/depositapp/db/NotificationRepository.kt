@@ -28,8 +28,10 @@ class NotificationRepository(
     private val processedDao: ParsedNotificationDao = db.parsedNotificationDao()
     private val sendDepositDao: SendDepositResultDao = db.sendDepositResultDao()
     private val apiService: ApiService by lazy {
+        val base = context.getString(R.string.server_base_url)
+        val safeBase = if (base.endsWith("/")) base else "$base/"
         Retrofit.Builder()
-            .baseUrl(context.getString(R.string.server_base_url))
+            .baseUrl(safeBase)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
@@ -73,20 +75,24 @@ class NotificationRepository(
         if (processedNotifications.isEmpty()) return true
 
         var anySuccess = false // mark as true if any notif succeeded
-        val jwt = loginToServer(context)
+        val jwt = try {
+            loginToServer(context)
+        } catch (e: Exception) {
+            Log.e("notif_repo", "Login failed; aborting sendBuffer", e)
+            return false
+        }
         processedNotifications.forEach { notif ->
             try {
-                val response = withContext(Dispatchers.IO) {
-                    sendDepositToServer(
-                        context,
-                        jwt,
-                        SendDepositRequest(
-                            notif.amount,
-                            notif.depositTime,
-                            notif.depositName
-                        )
+                val response = sendDepositToServer(
+                    context,
+                    jwt,
+                    SendDepositRequest(
+                        notif.amount,
+                        notif.depositTime,
+                        notif.depositName
                     )
-                }
+                )
+
                 mutex.withLock {
                     sendDepositDao.insert(
                         SendDepositResult(
@@ -152,7 +158,7 @@ class NotificationRepository(
         }
         val amount = convertCurrencyStringToLong(titleTokens[1])
 
-        val textSplit = notif.content.split(' ')
+        val textSplit = notif.content.trim().split(Regex("\\s+"))
         if (textSplit.size < 7) {
             throw IllegalStateException("903")
         }
@@ -175,7 +181,9 @@ class NotificationRepository(
         val email = context.getString(R.string.server_login_email)
         val apiSecret = context.getString(R.string.server_api_key)
         val reqLoginBody = LoginRequest(email)
-        val resLogin = apiService.loginUser(apiSecret, reqLoginBody)
+        val resLogin = withContext(Dispatchers.IO) {
+            apiService.loginUser(apiSecret, reqLoginBody)
+        }
 
         if (!resLogin.isSuccessful) throw IllegalStateException("952")
         val loginResponse = resLogin.body()
@@ -193,7 +201,9 @@ class NotificationRepository(
 
         val apiSecret = context.getString(R.string.server_api_key)
 
-        val resDeposit = apiService.sendDeposit(apiSecret, jwt, reqDepositBody)
+        val resDeposit = withContext(Dispatchers.IO) {
+            apiService.sendDeposit(apiSecret, jwt, reqDepositBody)
+        }
         val result = resDeposit.body()
         if (!resDeposit.isSuccessful || result == null) throw IllegalStateException("962")
         return result

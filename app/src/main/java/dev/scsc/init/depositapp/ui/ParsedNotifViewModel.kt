@@ -20,6 +20,10 @@ class ParsedNotifViewModel(private val repository: NotificationRepository) : Vie
     private val _uiState = MutableStateFlow<List<ParsedNotification>>(emptyList())
     val uiState: StateFlow<List<ParsedNotification>> = _uiState.asStateFlow()
 
+    init {
+        refreshState()
+    }
+
     fun refreshState() {
         viewModelScope.launch {
             _uiState.value = repository.getAllProcessedNotif()
@@ -29,8 +33,8 @@ class ParsedNotifViewModel(private val repository: NotificationRepository) : Vie
     fun onSendButtonClick() {
         viewModelScope.launch {
             repository.sendBufferToServer()
-            refreshState()
         }
+        refreshState()
     }
 
     companion object {

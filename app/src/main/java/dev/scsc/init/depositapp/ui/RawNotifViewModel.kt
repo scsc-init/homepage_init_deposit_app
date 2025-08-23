@@ -20,6 +20,10 @@ class RawNotifViewModel(private val repository: NotificationRepository) : ViewMo
     private val _uiState = MutableStateFlow<List<RawNotification>>(emptyList())
     val uiState: StateFlow<List<RawNotification>> = _uiState.asStateFlow()
 
+    init {
+        refreshState()
+    }
+
     fun refreshState() {
         viewModelScope.launch {
             _uiState.value = repository.getAllRawNotif()
@@ -29,8 +33,8 @@ class RawNotifViewModel(private val repository: NotificationRepository) : ViewMo
     fun onParseButtonClick() {
         viewModelScope.launch {
             repository.processAndStoreNotifications()
-            refreshState()
         }
+        refreshState()
     }
 
     companion object {

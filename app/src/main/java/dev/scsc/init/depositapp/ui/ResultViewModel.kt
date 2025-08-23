@@ -20,6 +20,10 @@ class ResultViewModel(private val repository: NotificationRepository) : ViewMode
     private val _uiState = MutableStateFlow<List<SendDepositResult>>(emptyList())
     val uiState: StateFlow<List<SendDepositResult>> = _uiState.asStateFlow()
 
+    init {
+        refreshState()
+    }
+
     fun refreshState() {
         viewModelScope.launch {
             _uiState.value = repository.getAllSendDepositResult()
@@ -29,15 +33,15 @@ class ResultViewModel(private val repository: NotificationRepository) : ViewMode
     fun onDeleteSucceededButtonClick() {
         viewModelScope.launch {
             repository.deleteSucceededResult()
-            refreshState()
         }
+        refreshState()
     }
 
     fun onDeleteFailedButtonClick() {
         viewModelScope.launch {
             repository.deleteFailedResult()
-            refreshState()
         }
+        refreshState()
     }
 
     companion object {
