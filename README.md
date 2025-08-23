@@ -57,7 +57,9 @@ ide.experimental.ui=true
 
 ### 빌드 도구 등 버전
 
+- sourceCompatibility: Java 17
 - targetCompatibility: Java 17
+- Kotlin JVM target: 17
 - AGP (Android Gradle Plugin): 8.12.1
 - Gradle: 8.13
 - Gradle JDK: 21

@@ -51,7 +51,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.fromTarget("17")
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

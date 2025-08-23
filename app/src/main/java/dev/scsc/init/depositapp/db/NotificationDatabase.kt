@@ -36,7 +36,7 @@ abstract class NotificationDatabase : RoomDatabase() {
     }
 }
 
-val MIGRATION_1_2 = object : Migration(1, 2) {
+internal val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_send_deposit_result_result_code` ON `send_deposit_result` (`result_code`)"
@@ -44,7 +44,7 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
-val MIGRATION_2_3 = object : Migration(2, 3) {
+internal val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL(
             "CREATE INDEX IF NOT EXISTS `index_send_deposit_result_result_code` ON `send_deposit_result` (`result_code`)"
