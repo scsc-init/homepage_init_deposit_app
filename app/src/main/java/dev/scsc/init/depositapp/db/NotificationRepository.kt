@@ -180,7 +180,8 @@ class NotificationRepository(
 
         val email = context.getString(R.string.server_login_email)
         val apiSecret = context.getString(R.string.server_api_key)
-        val reqLoginBody = LoginRequest(email)
+        val hashToken = context.getString(R.string.server_login_hash_token)
+        val reqLoginBody = LoginRequest(email, hashToken)
         val resLogin = withContext(Dispatchers.IO) {
             apiService.loginUser(apiSecret, reqLoginBody)
         }
